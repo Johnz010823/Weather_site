@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}WeatherNow - Home{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="gradient-text">Discover Weather</span>
+                <br>Around the World
+            </h1>
+            <p class="hero-subtitle">Get real-time weather updates for any city instantly</p>
+            
+            <!-- Search Form -->
+            <form method="POST" class="search-form" id="weatherForm">
+                {% csrf_token %}
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input 
+                        type="text" 
+                        name="city" 
+                        placeholder="Enter city name (e.g., London, Tokyo, New York)"
+                        class="search-input"
+                        required
+                        autocomplete="off"
+                    >
+                    <button type="submit" class="search-btn">
+                        <span>Get Weather</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+
+            {% if error %}
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if weather %}
+<div class="weather-section">
+    <div class="container">
+        <!-- Main Weather Card -->
+        <div class="weather-card main-weather">
+            <div class="weather-header">
+                <div class="location">
+                    <h2><i class="fas fa-map-marker-alt"></i> {{ weather.city }}, {{ weather.country }}</h2>
+                    <p class="current-date" id="currentDate"></p>
+                </div>
+                <div class="weather-icon-large">
+                    <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@4x.png" alt="{{ weather.description }}">
+                </div>
+            </div>
+            
+            <div class="weather-body">
+                <div class="temperature-main">
+                    <span class="temp-value">{{ weather.temperature }}</span>
+                    <span class="temp-unit">°C</span>
+                </div>
+                <p class="weather-description">{{ weather.description }}</p>
+                <p class="feels-like">Feels like {{ weather.feels_like }}°C</p>
+            </div>
+        </div>
+
+        <!-- Weather Details Grid -->
+        <div class="weather-details-grid">
+            <div class="detail-card">
+                <div class="detail-icon">
+                    <i class="fas fa-temperature-high"></i>
+                </div>
+                <div class="detail-info">
+                    <span class="detail-label">Min / Max</span>
+                    <span class="detail-value">{{ weather.temp_min }}° / {{ weather.temp_max }}°C</span>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon">
+                    <i class="fas fa-tint"></i>
+                </div>
+                <div class="detail-info">
+                    <span class="detail-label">Humidity</span>
+                    <span class="detail-value">{{ weather.humidity }}%</span>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon">
+                    <i class="fas fa-wind"></i>
+                </div>
+                <div class="detail-info">
+                    <span class="detail-label">Wind Speed</span>
+                    <span class="detail-value">{{ weather.wind_speed }} m/s</span>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon">
+                    <i class="fas fa-compress-arrows-alt"></i>
+                </div>
+                <div class="detail-info">
+                    <span class="detail-label">Pressure</span>
+                    <span class="detail-value">{{ weather.pressure }} hPa</span>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="detail-info">
+                    <span class="detail-label">Visibility</span>
+                    <span class="detail-value">{{ weather.visibility }} km</span>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon">
+                    <i class="fas fa-sun"></i>
+                </div>
+                <div class="detail-info">
+                    <span class="detail-label">Sunrise / Sunset</span>
+                    <span class="detail-value">{{ weather.sunrise }} / {{ weather.sunset }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Recent Searches -->
+{% if recent_searches %}
+<div class="recent-section">
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-clock"></i> Recent Searches
+        </h2>
+        <div class="recent-grid">
+            {% for search in recent_searches %}
+            <div class="recent-card">
+                <div class="recent-header">
+                    <h3>{{ search.city }}</h3>
+                    <span class="recent-temp">{{ search.temperature }}°C</span>
+                </div>
+                <p class="recent-description">{{ search.description }}</p>
+                <div class="recent-details">
+                    <span><i class="fas fa-tint"></i> {{ search.humidity }}%</span>
+                    <span><i class="fas fa-wind"></i> {{ search.wind_speed }} m/s</span>
+                </div>
+                <p class="recent-time">{{ search.searched_at|timesince }} ago</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="view-all-btn">
+            <a href="{% url 'weather_app:history' %}" class="btn btn-secondary">
+                View All History <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Features Section -->
+<div class="features-section">
+    <div class="container">
+        <h2 class="section-title">Why Choose WeatherNow?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Real-Time Data</h3>
+                <p>Get instant weather updates from reliable sources worldwide</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3>Global Coverage</h3>
+                <p>Access weather information for any city across the globe</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Detailed Insights</h3>
+                <p>Comprehensive weather metrics including humidity, wind, and pressure</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3>Search History</h3>
+                <p>Keep track of your previous weather searches for quick access</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Display current date
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateElement = document.getElementById('currentDate');
+        if (dateElement) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date();
+            dateElement.textContent = today.toLocaleDateString('en-US', options);
+        }
+    });
+</script>
+{% endblock %}

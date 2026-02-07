@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}WeatherNow - Search History{% endblock %}
+
+{% block content %}
+<div class="history-hero">
+    <div class="container">
+        <h1 class="page-title">
+            <i class="fas fa-history"></i>
+            Search History
+        </h1>
+        <p class="page-subtitle">Browse your previous weather searches</p>
+    </div>
+</div>
+
+<div class="history-section">
+    <div class="container">
+        {% if searches %}
+        <div class="history-stats">
+            <div class="stat-card">
+                <i class="fas fa-search"></i>
+                <div>
+                    <h3>{{ searches|length }}</h3>
+                    <p>Recent Searches</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-table-container">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-map-marker-alt"></i> Location</th>
+                        <th><i class="fas fa-thermometer-half"></i> Temperature</th>
+                        <th><i class="fas fa-cloud"></i> Description</th>
+                        <th><i class="fas fa-tint"></i> Humidity</th>
+                        <th><i class="fas fa-wind"></i> Wind Speed</th>
+                        <th><i class="fas fa-clock"></i> Searched At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for search in searches %}
+                    <tr class="table-row">
+                        <td class="location-cell">
+                            <strong>{{ search.city }}</strong>
+                            {% if search.country %}
+                                <span class="country-tag">{{ search.country }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="temp-badge">{{ search.temperature }}°C</span>
+                        </td>
+                        <td>{{ search.description }}</td>
+                        <td>
+                            <div class="metric-value">
+                                <i class="fas fa-tint"></i> {{ search.humidity }}%
+                            </div>
+                        </td>
+                        <td>
+                            <div class="metric-value">
+                                <i class="fas fa-wind"></i> {{ search.wind_speed }} m/s
+                            </div>
+                        </td>
+                        <td class="time-cell">
+                            <div class="time-info">
+                                <span class="time-main">{{ search.searched_at|date:"M d, Y" }}</span>
+                                <span class="time-sub">{{ search.searched_at|time:"H:i" }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="back-btn-container">
+            <a href="{% url 'weather_app:index' %}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-search"></i>
+            <h2>No Search History</h2>
+            <p>Start searching for weather information to see your history here</p>
+            <a href="{% url 'weather_app:index' %}" class="btn btn-primary">
+                Start Searching
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
